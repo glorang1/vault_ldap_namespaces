@@ -15,27 +15,27 @@ create_vault_policy () {
         echo "Vault policy ${3} is being created"
             # if the policy for the namespace is to live in the root namespace then we us ${5} as the namespace to be inserted into the policy
             if [[ "${6}" == *"LOCAL"* ]] && [[ "${5}" != "" ]]; then
-                sed 's/path \\"/path \\"'${5}'\//g' ${4}  > /tmp/temppolicy.json
+                sed 's/path \\"/path \\"'${5}'\//g' ${4}  > /tmp/temppolicy.hcl
                              
                 curl \
                     -H "X-Vault-Token: reallystrongpassword" \
                     -X PUT \
-                    -d @/tmp/temppolicy.json \
+                    -d @/tmp/temppolicy.hcl \
                     ${2}/v1/sys/policies/acl/${3}
             else
-                cp ${4} /tmp/temppolicy.json
+                cp ${4} /tmp/temppolicy.hcl
 
                 curl \
                     -H "X-Vault-Token: reallystrongpassword" \
                     -H "X-Vault-Namespace: ${5}" \
                     -X PUT \
-                    -d @/tmp/temppolicy.json \
+                    -d @/tmp/temppolicy.hcl \
                     ${2}/v1/sys/policies/acl/${3}
             fi
             
             echo "Created ${3} vault policy from the following file - "
-            cat /tmp/temppolicy.json
-            rm /tmp/temppolicy.json
+            cat /tmp/temppolicy.hcl
+            rm /tmp/temppolicy.hcl
 
     else
         echo "Vault policy ${3} already exists - no new policy created"
@@ -47,11 +47,11 @@ create_vault_policy () {
 }
 
 create_vault_policies_for_namespace () {
-    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} vaultAdmin /usr/local/bootstrap/conf/vault_root_admin_policy.json "" "LOCAL"
-    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${APP_TEAMA_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.json ${APP_TEAMA_NAMESPACE} "REMOTE"
-    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${APP_TEAMB_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.json ${APP_TEAMB_NAMESPACE} "REMOTE"
-    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${SHARED_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.json ${SHARED_NAMESPACE} "LOCAL"
-    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${SHARED_NAMESPACE}_operator /usr/local/bootstrap/conf/vault_namespace_operator_policy.json ${SHARED_NAMESPACE} "LOCAL"
+    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} vaultAdmin /usr/local/bootstrap/conf/vault_root_admin_policy.hcl "" "LOCAL"
+    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${APP_TEAMA_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.hcl ${APP_TEAMA_NAMESPACE} "REMOTE"
+    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${APP_TEAMB_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.hcl ${APP_TEAMB_NAMESPACE} "REMOTE"
+    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${SHARED_NAMESPACE}_admin /usr/local/bootstrap/conf/vault_namespace_admin_policy.hcl ${SHARED_NAMESPACE} "LOCAL"
+    create_vault_policy ${VAULT_TOKEN} ${VAULT_ADDR} ${SHARED_NAMESPACE}_operator /usr/local/bootstrap/conf/vault_namespace_operator_policy.hcl ${SHARED_NAMESPACE} "LOCAL"
 
 }
 
@@ -320,7 +320,7 @@ setup_environment () {
     
     # Install Enterprise Binary
     #VAULT_BINARY=vault-enterprise_1.2.0-beta1+prem_linux_amd64.zip
-    VAULT_BINARY=vault-enterprise_1.2.2+prem_linux_amd64.zip
+    VAULT_BINARY=vault-enterprise_1.2.4+prem_linux_amd64.zip
     pushd /usr/local/bin
     sudo unzip -o /usr/local/bootstrap/.hsm/${VAULT_BINARY}
     sudo chmod +x vault

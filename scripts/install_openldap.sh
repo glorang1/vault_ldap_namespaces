@@ -40,7 +40,7 @@ install_and_configure_openldap () {
     LDAP_CONFIGURED=$?
     if [[ ${LDAP_CONFIGURED} -ne 0 ]]; then
         echo "Installing base packages"
-        installnoninteractive slapd ldap-utils libarchive-zip-perl
+        installnoninteractive slapd ldap-utils libarchive-zip-perl jq curl 
 
         # Reset passwords to enable DIT configuration following silent installation
         echo "Setting up default passwords"

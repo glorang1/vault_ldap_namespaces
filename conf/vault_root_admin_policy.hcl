@@ -1,4 +1,4 @@
-## Operations
+# Operations
 
 # Manage namespaces
 path "sys/namespaces/*" {
